@@ -1,7 +1,7 @@
 import RPi.GPIO as gpio
 import time
 
-class RoboCar:
+class RoboMovement:
     def __init__(self,pin=[29,31,35,37,12,18]):
         try:
             gpio.cleanup()
@@ -22,8 +22,7 @@ class RoboCar:
             self.a=0
             self.b=0
         
-            self.GPIO_TRIGGER = pin[4]
-            self.GPIO_ECHO = pin[5]
+            
             self.setup()
             
             
@@ -36,8 +35,8 @@ class RoboCar:
         gpio.setup(self.orange,gpio.OUT)"""
         
         gpio.setmode(self.mode)
-        gpio.setup(self.GPIO_TRIGGER, gpio.OUT)
-        gpio.setup(self.GPIO_ECHO, gpio.IN)
+        #gpio.setup(self.GPIO_TRIGGER, gpio.OUT)
+        #gpio.setup(self.GPIO_ECHO, gpio.IN)
         
         
         #use pwm on inputs so motors don't go too fast
@@ -137,6 +136,16 @@ class RoboCar:
     def reset(self):
         gpio.cleanup()
         return
+    
+class DistanceCalculation:
+    
+    def __init__(self,pin=[29,31,35,37,12,18]):
+        self.GPIO_TRIGGER = pin[4]
+        self.GPIO_ECHO = pin[5]
+        gpio.setmode(gpio.BOARD)
+        gpio.setup(self.GPIO_TRIGGER, gpio.OUT)
+        gpio.setup(self.GPIO_ECHO, gpio.IN)
+        
     def sonic_distance(self):
         gpio.output(self.GPIO_TRIGGER, True)
  
@@ -150,10 +159,14 @@ class RoboCar:
             StartTime = time.time()
             #if StartTime-time_check>=0.05:
             #    return 200
- 
+     
         while gpio.input(self.GPIO_ECHO) == 1:
             StopTime = time.time()
  
         TimeElapsed = StopTime - StartTime
         distance = (TimeElapsed * 34300) / 2
         return distance
+    
+    def reset(self):
+        gpio.cleanup()
+        return

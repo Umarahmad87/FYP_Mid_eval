@@ -3,31 +3,24 @@ import threading
 from Queue import Queue
 import os
 import random
+R = 0
+D = 0
+class obstacleAvoidence:
 
-R = RoboCar()
-t_dist = Queue(maxsize=1)
-def closeAll():
-    global R
-    R.reset()
-    return
-
-def signal_handler(signal,frame):
-    closeAll()
-    print 'all closed;;;;'
-    time.sleep(1)
-    os._exit(1)
-
-class obstacle_avoid:
-    def program_start(self):
+    def make_move(self):
+                
         try:
             global R
+            global D
+            R = RoboMovement()
+            D = DistanceCalculation()
             R.setup()
             count = 5
             dist = 0
             choice = [R.left,R.right,R.left,R.right,R.left,R.right,R.left,R.right]
             while True:
                 try:
-                    dist = R.sonic_distance()
+                    dist = D.sonic_distance()
                     print "Distance = ",dist
                     if dist>35:
                         R.forward(step=0.5,speed=50)
@@ -42,8 +35,8 @@ class obstacle_avoid:
                         
                     count-=1
                     time.sleep(0.05)
-                except:
-                    print "in continue"
+                except Exception as e:
+                    print e
                     continue
                 
                 #time.sleep(0.01)
@@ -51,8 +44,10 @@ class obstacle_avoid:
         except:
             print "in main except"
             R.reset()
+            D.reset()
         finally:
             R.reset()
+            D.reset()
     def check(self):
         global R
         R.setup()
